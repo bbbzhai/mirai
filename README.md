@@ -1,7 +1,6 @@
-Mirai 
+#Mirai Source Code and Setup Instruction
 
-The Mirai malware for use on a virtual environment
-For Research/IoC Development Purposes
+For Research Purposes
 
-Setup Intruction: Mirai Setup Instruction
+Setup Intruction: [Setup-Instruction.md](Setup-Instruction.md)
 
