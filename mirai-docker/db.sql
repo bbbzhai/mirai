@@ -1,5 +1,7 @@
 CREATE DATABASE mirai;
 
+USE mirai;
+
 CREATE TABLE `history` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
@@ -34,3 +36,5 @@ CREATE TABLE `whitelist` (
   PRIMARY KEY (`id`),
   KEY `prefix` (`prefix`)
 );
+
+INSERT INTO users VALUES (NULL, 'root', 'root', 0, 0, 0, 0, -1, 1, 30, '');

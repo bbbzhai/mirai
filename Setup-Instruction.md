@@ -1,4 +1,4 @@
-#Mirai Setup Instruction
+# Mirai Setup Instruction
 
 ## Step 1: Update and upgrade, 
 use root priviledge to make things easier
@@ -71,12 +71,12 @@ username: root
 password: root
 
 
-setup complete
+**setup complete**
 ***
 
 
-##Other configuration:
-###table.c:
+## Other configuration:
+### table.c:
 we need to encrypt cnc-domain and report domain and put it in table.c  
 Mirai use this to resovle your domain
 
