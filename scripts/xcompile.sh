@@ -16,7 +16,7 @@ debconf-set-selections <<< "mysql-server mysql-server/root_password password roo
 
 echo "Creating folder /etc/xcompile"
 mkdir /etc/xcompile > /dev/null 2>&1
-cd /etc/cross-compile
+cd /etc/xcompile
 
 echo "Copy cross-compiler-i586.tar.bz2 and etc to /etc/xcompile..."
 wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-armv4l.tar.bz2

@@ -14,7 +14,7 @@ This script download and compile xcompiler for you.
 See script for detail.
 ```
 cd scripts
-./x-compile.sh
+./xcompile.sh
 ```
 ## Step 3: Install go packages:
 ```	
